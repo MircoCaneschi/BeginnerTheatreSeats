@@ -29,22 +29,24 @@ public class Hall {
     }
 
 
-    protected boolean reserve(int x, int y, double balance, boolean disable) {
+    protected boolean isSeatFree(int x, int y) {
         if(!this.seats[x][y]){
-            if(disable)
-                if(balance>this.concession){
-                    this.seats[x][y]=true;
-                    return true;
-                }
-            else
-                if(balance>this.price) {
-                    this.seats[x][y] = true;
-                    return true;
-                }
-            System.out.println("Not enough credit... looser:P");
-            return false;
+            this.seats[x][y]=true;
+            return true;
         }
         System.out.println("Sorry, this seat is not available!");
+        return false;
+    }
+    protected boolean check(double balance, boolean disable){
+        if(disable)
+            if(balance>this.concession){
+                return true;
+            }
+            else
+            if(balance>this.price) {
+                return true;
+            }
+        System.out.println("Not enough credit... looser:P");
         return false;
     }
 
@@ -62,6 +64,9 @@ public class Hall {
         }
     }
 
+    public boolean[][] getSeats() {
+        return seats;
+    }
     public double getPrice() {
         return price;
     }

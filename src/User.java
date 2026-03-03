@@ -59,42 +59,50 @@ public class User {
             return;
         }
         hall.drawHall();
-        //todo inserire lettura coordinate da terminale e controllo validità
-        System.out.println("Reserving...  Select a seat typing the coordinates:");
-        Scanner scanner=new Scanner(System.in);
-        int x, y, count=0;
-        do{
-            if(count!=0){
-                System.out.println("This coordinates ar not allowed! Try again...");
-            }   //only prints if it has already been put some coordinates that were out of bounds
-            System.out.print("X: ");
-            while(!scanner.hasNextInt()){
-                System.out.println("Error, data format is incorrect! Try again...");
+        while(true) {
+            System.out.println("Reserving...  Select a seat typing the coordinates:");
+            if (!hall.check(this.balance, this.disable)) {
+                System.out.println("Your balance isn't enough to cover the check!");
+                return;
+            }
+            Scanner scanner = new Scanner(System.in);
+            int x, y, count = 0;
+            do {
+                if (count != 0) {
+                    System.out.println("This coordinates ar not allowed! Try again...");
+                }   //only prints if it has already been put some coordinates that were out of bounds
                 System.out.print("X: ");
-                scanner.next();
-            }
-            x= scanner.nextInt();
-            System.out.print("Y: ");
-            while(!scanner.hasNextInt()){
-                System.out.println("Error, data format is incorrect! Try again...");
+                while (!scanner.hasNextInt()) {
+                    System.out.println("Error, data format is incorrect! Try again...");
+                    System.out.print("X: ");
+                    scanner.next();
+                }
+                x = scanner.nextInt();
                 System.out.print("Y: ");
+                while (!scanner.hasNextInt()) {
+                    System.out.println("Error, data format is incorrect! Try again...");
+                    System.out.print("Y: ");
+                    scanner.next();
+                }
+                y = scanner.nextInt();
+                count++;
+            } while (!(x < hall.getX()) || !(y < hall.getY()));
+
+            if (hall.isSeatFree(x, y)) {
+                if (this.disable)
+                    this.transaction(hall.getConcession());
+                else
+                    this.transaction(hall.getPrice());
+                System.out.println("You succesfully reserved the x,y seat! Current balance: " + this.balance);
+                return;
+            }
+            System.out.println("Sorry, that seat is taken. Do you what to choose another? (Y/n)");
+            while (!scanner.hasNext()) {
                 scanner.next();
             }
-            y= scanner.nextInt();
-            count++;
-        }while(!(x<hall.getX()) || !(y<hall.getY()));
-
-        if(hall.reserve(x,y,this.balance, this.disable)){       //TODO fix: check for balance must be separeted and previus of check for the seat
-            if(this.disable)
-                this.transaction(hall.getConcession());
-            else
-                this.transaction(hall.getPrice());
-            System.out.println("You succesfully reserved the x,y seat! Current balance: "+this.balance);
-            return;
+            String response = scanner.next();
+            if(response.equals("n") || response.equals("N")) return;
         }
-
-//todo inserire richiesta "vuoi scegliere una altro posto" se il posto non è valido con ciclo while
-
     }
 
 }
